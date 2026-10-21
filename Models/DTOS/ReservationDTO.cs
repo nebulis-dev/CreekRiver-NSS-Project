@@ -11,4 +11,16 @@ public class ReservationDTO
     public DateTime CheckoutDate { get; set; }
 
     public DateTime? CancelledDate { get; set; }
+
+    public int TotalNights => (CheckinDate - CheckoutDate).Days;
+
+    private static readonly decimal _reservationsBaseFee = 10M;
+
+    public decimal TotalCost
+    {
+        get
+        {
+            return Campsite.CampsiteType.FeePerNight * TotalNights + _reservationsBaseFee;
+        }
+    }
 }
