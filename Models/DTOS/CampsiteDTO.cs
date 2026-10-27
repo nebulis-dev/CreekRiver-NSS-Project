@@ -10,4 +10,8 @@ public class CampsiteDTO
     public int CampsiteTypeId { get; set; }
     public CampsiteTypeDTO CampsiteType { get; set; }
     public List<ReservationDTO> Reservations { get; set; }
+    public bool Wifi { get; set; }
+    public bool FirePit { get; set; }
+    public bool WaterHookup { get; set; }
+    public bool PetFriendly { get; set; }
 }

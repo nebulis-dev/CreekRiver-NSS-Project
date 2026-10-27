@@ -11,4 +11,5 @@ public class Campsite
     public int CampsiteTypeId { get; set; }
     public CampsiteType CampsiteType { get; set; }
     public List<Reservation> Reservations { get; set; }
+    public List<Amenity> Amenities { get; set; }
 }

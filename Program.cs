@@ -3,6 +3,7 @@ using CreekRiver.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
+using System.Linq.Expressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,15 +114,15 @@ app.MapPost("/api/campsites", (CreekRiverDbContext db, Campsite campsite) =>
 app.MapPost("/api/reservations", (CreekRiverDbContext db, Reservation newRes) =>
 {
     try
-{
-    db.Reservations.Add(newRes);
-    db.SaveChanges();
-    return Results.Created($"/api/reservations/{newRes.Id}", newRes);
-}
-catch (DbUpdateException)
-{
-    return Results.BadRequest("Invalid data submitted");
-}
+    {
+        db.Reservations.Add(newRes);
+        db.SaveChanges();
+        return Results.Created($"/api/reservations/{newRes.Id}", newRes);
+    }
+    catch (DbUpdateException)
+    {
+        return Results.BadRequest("Invalid data submitted");
+    }
 });
 
 app.MapPost("/api/reservations/{id}/cancel", (CreekRiverDbContext db, int id) =>
