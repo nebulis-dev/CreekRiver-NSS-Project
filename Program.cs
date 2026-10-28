@@ -46,6 +46,7 @@ app.MapGet("/api/campsites/{id}", (CreekRiverDbContext db, int id) =>
 {
     return db.Campsites
         .Include(c => c.CampsiteType)
+        .Include(c => c.Amenities)
         .Select(c => new CampsiteDTO
         {
             Id = c.Id,
@@ -58,7 +59,12 @@ app.MapGet("/api/campsites/{id}", (CreekRiverDbContext db, int id) =>
                 CampsiteTypeName = c.CampsiteType.CampsiteTypeName,
                 FeePerNight = c.CampsiteType.FeePerNight,
                 MaxReservationDays = c.CampsiteType.MaxReservationDays
-            }
+            },
+            Amenities = c.Amenities.Select(a => new AmenityDTO
+            {
+                Id = a.Id,
+                AmenityName = a.AmenityName
+            }).ToList()
         })
         .Single(c => c.Id == id);
 });
@@ -162,6 +168,18 @@ app.MapPut("/api/campsites/{id}", (CreekRiverDbContext db, int id, Campsite camp
     campsiteToUpdate.CampsiteTypeId = campsite.CampsiteTypeId;
     campsiteToUpdate.ImageUrl = campsite.ImageUrl;
 
+    db.SaveChanges();
+    return Results.NoContent();
+});
+
+app.MapPut("/api/campsites/{id}/amenities", (CreekRiverDbContext db, int id, List<int> amenityIds) =>
+{
+    Campsite campsite = db.Campsites.Include(c => c.Amenities).SingleOrDefault(c => c.Id == id);
+    if (campsite == null)
+    {
+        return Results.NotFound();
+    }
+    campsite.Amenities = db.Amenities.Where(a => amenityIds.Contains(a.Id)).ToList();
     db.SaveChanges();
     return Results.NoContent();
 });

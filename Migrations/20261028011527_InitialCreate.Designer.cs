@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CreekRiver.Migrations
 {
     [DbContext(typeof(CreekRiverDbContext))]
-    [Migration("20261014232349_InitialCreate")]
+    [Migration("20261028011527_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -23,6 +23,77 @@ namespace CreekRiver.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("AmenityCampsite", b =>
+                {
+                    b.Property<int>("AmenitiesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CampsitesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("AmenitiesId", "CampsitesId");
+
+                    b.HasIndex("CampsitesId");
+
+                    b.ToTable("AmenityCampsite");
+
+                    b.HasData(
+                        new
+                        {
+                            AmenitiesId = 1,
+                            CampsitesId = 1
+                        },
+                        new
+                        {
+                            AmenitiesId = 2,
+                            CampsitesId = 1
+                        },
+                        new
+                        {
+                            AmenitiesId = 2,
+                            CampsitesId = 2
+                        });
+                });
+
+            modelBuilder.Entity("CreekRiver.Models.Amenity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AmenityName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Amenities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AmenityName = "WiFi"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AmenityName = "Fire Pit"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AmenityName = "Water Hookup"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AmenityName = "Pet Friendly"
+                        });
+                });
 
             modelBuilder.Entity("CreekRiver.Models.Campsite", b =>
                 {
@@ -56,6 +127,13 @@ namespace CreekRiver.Migrations
                             CampsiteTypeId = 1,
                             ImageUrl = "https://tnstateparks.com/assets/images/content-images/campgrounds/249/colsp-area2-site73.jpg",
                             Nickname = "Barred Owl"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CampsiteTypeId = 2,
+                            ImageUrl = "https://www.startpage.com/av/proxy-image?piurl=https%3A%2F%2Fwww.campspot.com%2Fassets%2Fimg%2Fbackground-elkamp-1920x1280-new-2.jpg&sp=1793146847Tbb88162a98b501703861fedb13189385a69ccf1dab97da9f3be9a7a77e84b381",
+                            Nickname = "The Backyard"
                         });
                 });
 
@@ -123,6 +201,9 @@ namespace CreekRiver.Migrations
                     b.Property<int>("CampsiteId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("CancelledDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<DateTime>("CheckinDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -164,36 +245,60 @@ namespace CreekRiver.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserProfiles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "example@email.com",
+                            FirstName = "Baron",
+                            LastName = "Cloud"
+                        });
+                });
+
+            modelBuilder.Entity("AmenityCampsite", b =>
+                {
+                    b.HasOne("CreekRiver.Models.Amenity", null)
+                        .WithMany()
+                        .HasForeignKey("AmenitiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CreekRiver.Models.Campsite", null)
+                        .WithMany()
+                        .HasForeignKey("CampsitesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CreekRiver.Models.Campsite", b =>
                 {
-                    b.HasOne("CreekRiver.Models.CampsiteType", "campsiteType")
+                    b.HasOne("CreekRiver.Models.CampsiteType", "CampsiteType")
                         .WithMany()
                         .HasForeignKey("CampsiteTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("campsiteType");
+                    b.Navigation("CampsiteType");
                 });
 
             modelBuilder.Entity("CreekRiver.Models.Reservation", b =>
                 {
-                    b.HasOne("CreekRiver.Models.Campsite", "campsite")
+                    b.HasOne("CreekRiver.Models.Campsite", "Campsite")
                         .WithMany("Reservations")
                         .HasForeignKey("CampsiteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CreekRiver.Models.UserProfile", "userProfile")
-                        .WithMany("reservations")
+                    b.HasOne("CreekRiver.Models.UserProfile", "UserProfile")
+                        .WithMany("Reservations")
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("campsite");
+                    b.Navigation("Campsite");
 
-                    b.Navigation("userProfile");
+                    b.Navigation("UserProfile");
                 });
 
             modelBuilder.Entity("CreekRiver.Models.Campsite", b =>
@@ -203,7 +308,7 @@ namespace CreekRiver.Migrations
 
             modelBuilder.Entity("CreekRiver.Models.UserProfile", b =>
                 {
-                    b.Navigation("reservations");
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

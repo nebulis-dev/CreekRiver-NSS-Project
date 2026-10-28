@@ -9,6 +9,11 @@ public class CreekRiverDbContext : DbContext
     public DbSet<Campsite> Campsites { get; set; }
     public DbSet<CampsiteType> CampsiteTypes { get; set; }
     public DbSet<Amenity> Amenities { get; set; }
+    
+    public CreekRiverDbContext(DbContextOptions<CreekRiverDbContext> context) : base(context)
+    {
+        
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,7 +29,8 @@ public class CreekRiverDbContext : DbContext
         modelBuilder.Entity<Campsite>().HasData(new Campsite[]
         {
             new Campsite {Id = 1, CampsiteTypeId = 1, Nickname = "Barred Owl", ImageUrl="https://tnstateparks.com/assets/images/content-images/campgrounds/249/colsp-area2-site73.jpg"},
-            new Campsite {Id = 2, CampsiteTypeId = 2, Nickname = "Charlies Factory", ImageUrl="https://www.startpage.com/av/proxy-image?piurl=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.jJIzhFe4DFKEhRIrPw4KBgHaE8%3Fr%3D0%26pid%3DApi&sp=1793143950Tc8b9de6a422609c6fe816a25ac22b8ad4fa05db82e3a7556557991000a980dac"}
+            new Campsite {Id = 2, CampsiteTypeId = 2, Nickname = "The Backyard", ImageUrl="https://www.startpage.com/av/proxy-image?piurl=https%3A%2F%2Fwww.campspot.com%2Fassets%2Fimg%2Fbackground-elkamp-1920x1280-new-2.jpg&sp=1793146847Tbb88162a98b501703861fedb13189385a69ccf1dab97da9f3be9a7a77e84b381"}
+
         });
 
         modelBuilder.Entity<UserProfile>().HasData(new UserProfile[]
@@ -48,8 +54,5 @@ public class CreekRiverDbContext : DbContext
         });
     }
 
-    public CreekRiverDbContext(DbContextOptions<CreekRiverDbContext> context) : base(context)
-    {
-        
-    }
+
 }
