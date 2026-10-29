@@ -9,6 +9,8 @@ public class CreekRiverDbContext : DbContext
     public DbSet<Campsite> Campsites { get; set; }
     public DbSet<CampsiteType> CampsiteTypes { get; set; }
     public DbSet<Amenity> Amenities { get; set; }
+    public DbSet<Activity> Activities { get; set; }
+    public DbSet<ReservationActivity> ReservationActivities { get; set; }
     
     public CreekRiverDbContext(DbContextOptions<CreekRiverDbContext> context) : base(context)
     {
@@ -52,7 +54,19 @@ public class CreekRiverDbContext : DbContext
             new {AmenitiesId = 2, CampsitesId = 1},
             new {AmenitiesId = 2, CampsitesId = 2}
         });
+
+        modelBuilder.Entity<Activity>().HasData(new Activity[]
+        {
+            new Activity {Id = 1, ActivityName = "Guided Fishing Trip", Price = 45.00M},
+            new Activity {Id = 2, ActivityName = "Firewood Bundle", Price = 8.00M},
+            new Activity {Id = 3, ActivityName = "Canoe Rental", Price = 30.00M}
+        });
+
+        modelBuilder.Entity<ReservationActivity>().HasData(new ReservationActivity[]
+        {
+            new ReservationActivity {Id = 1, ReservationId = 1, ActivityId = 2, Quantity = 3},
+            new ReservationActivity {Id = 2, ReservationId = 1, ActivityId = 1, Quantity = 1}
+        });
+
     }
-
-
 }

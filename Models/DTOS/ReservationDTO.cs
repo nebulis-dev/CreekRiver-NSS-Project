@@ -12,6 +12,8 @@ public class ReservationDTO
 
     public DateTime? CancelledDate { get; set; }
 
+    public List<ReservationActivityDTO> ReservationActivities { get; set; }
+
     public int TotalNights => (CheckinDate - CheckoutDate).Days;
 
     private static readonly decimal _reservationsBaseFee = 10M;

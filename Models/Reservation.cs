@@ -11,4 +11,6 @@ public class Reservation
     public DateTime CheckoutDate { get; set; }
 
     public DateTime? CancelledDate { get; set; }
+
+    public List<ReservationActivity> ReservationActivities { get; set; }
 }

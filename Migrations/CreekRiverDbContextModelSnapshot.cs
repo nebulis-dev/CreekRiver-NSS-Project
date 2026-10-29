@@ -53,6 +53,46 @@ namespace CreekRiver.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CreekRiver.Models.Activity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActivityName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Activities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ActivityName = "Guided Fishing Trip",
+                            Price = 45.00m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ActivityName = "Firewood Bundle",
+                            Price = 8.00m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ActivityName = "Canoe Rental",
+                            Price = 30.00m
+                        });
+                });
+
             modelBuilder.Entity("CreekRiver.Models.Amenity", b =>
                 {
                     b.Property<int>("Id")
@@ -219,6 +259,48 @@ namespace CreekRiver.Migrations
                     b.ToTable("Reservations");
                 });
 
+            modelBuilder.Entity("CreekRiver.Models.ReservationActivity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ActivityId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
+
+                    b.HasIndex("ReservationId");
+
+                    b.ToTable("ReservationActivities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ActivityId = 2,
+                            Quantity = 3,
+                            ReservationId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ActivityId = 1,
+                            Quantity = 1,
+                            ReservationId = 1
+                        });
+                });
+
             modelBuilder.Entity("CreekRiver.Models.UserProfile", b =>
                 {
                     b.Property<int>("Id")
@@ -298,9 +380,33 @@ namespace CreekRiver.Migrations
                     b.Navigation("UserProfile");
                 });
 
+            modelBuilder.Entity("CreekRiver.Models.ReservationActivity", b =>
+                {
+                    b.HasOne("CreekRiver.Models.Activity", "Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CreekRiver.Models.Reservation", "Reservation")
+                        .WithMany("ReservationActivities")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Activity");
+
+                    b.Navigation("Reservation");
+                });
+
             modelBuilder.Entity("CreekRiver.Models.Campsite", b =>
                 {
                     b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("CreekRiver.Models.Reservation", b =>
+                {
+                    b.Navigation("ReservationActivities");
                 });
 
             modelBuilder.Entity("CreekRiver.Models.UserProfile", b =>
