@@ -257,6 +257,16 @@ namespace CreekRiver.Migrations
                     b.HasIndex("UserProfileId");
 
                     b.ToTable("Reservations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CampsiteId = 1,
+                            CheckinDate = new DateTime(2026, 11, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckoutDate = new DateTime(2026, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserProfileId = 1
+                        });
                 });
 
             modelBuilder.Entity("CreekRiver.Models.ReservationActivity", b =>

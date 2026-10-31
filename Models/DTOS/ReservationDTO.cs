@@ -22,7 +22,8 @@ public class ReservationDTO
     {
         get
         {
-            return Campsite.CampsiteType.FeePerNight * TotalNights + _reservationsBaseFee;
+            decimal activitiesCost = ReservationActivities.Sum(ra => ra.Activity.Price * ra.Quantity);
+            return Campsite.CampsiteType.FeePerNight * TotalNights + _reservationsBaseFee + activitiesCost;
         }
     }
 }

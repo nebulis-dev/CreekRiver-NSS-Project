@@ -75,6 +75,8 @@ app.MapGet("/api/reservations", (CreekRiverDbContext db) =>
         .Include(r => r.UserProfile)
         .Include(r => r.Campsite)
         .ThenInclude(c => c.CampsiteType)
+        .Include(r => r.ReservationActivities)
+        .ThenInclude(ra => ra.Activity)
         .OrderBy(res => res.CheckinDate)
         .Select(r => new ReservationDTO
         {
@@ -104,7 +106,19 @@ app.MapGet("/api/reservations", (CreekRiverDbContext db) =>
                     MaxReservationDays = r.Campsite.CampsiteType.MaxReservationDays,
                     FeePerNight = r.Campsite.CampsiteType.FeePerNight
                 }
-            }
+            },
+            ReservationActivities = r.ReservationActivities.Select(ra => new ReservationActivityDTO
+            {
+                Id = ra.Id,
+                ActivityId = ra.ActivityId,
+                Quantity = ra.Quantity,
+                Activity = new ActivityDTO
+                {
+                    Id = ra.Activity.Id,
+                    ActivityName = ra.Activity.ActivityName,
+                    Price = ra.Activity.Price
+                }
+            }).ToList()
         })
         .ToList();
 });
@@ -141,6 +155,21 @@ app.MapPost("/api/reservations/{id}/cancel", (CreekRiverDbContext db, int id) =>
     reservation.CancelledDate = DateTime.Now;
     db.SaveChanges();
     return Results.NoContent();
+});
+
+app.MapPost("/api/reservations/{id}/activities", (CreekRiverDbContext db, int id, ReservationActivity newReservationActivity) =>
+{
+    newReservationActivity.ReservationId = id;
+    try
+    {
+        db.ReservationActivities.Add(newReservationActivity);
+        db.SaveChanges();
+        return Results.Created($"/api/reservations/{id}/activitites/{newReservationActivity.Id}", newReservationActivity);
+    }
+    catch (DbUpdateException)
+    {
+        return Results.BadRequest("Invalid data submitted");
+    }
 });
 
 // Delete Endpoint(s)
